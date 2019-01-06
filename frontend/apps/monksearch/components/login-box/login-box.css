@@ -1,0 +1,27 @@
+/* 
+ * (C) 2015, 2018 TekMonks. All rights reserved.
+ * License: MIT - see enclosed license.txt file.
+ */
+
+@import url("./3p/surface_styles.css");
+
+@font-face {
+    font-family: 'Roboto';
+    src: url('./roboto-v18-latin-regular.woff') format('woff2');
+}
+
+.monkshu--extension-roboto-font {
+    font-family: 'Roboto', sans-serif;
+}
+
+.monkshu--extension-bottom-aligned {
+    vertical-align: baseline;
+}
+
+.monkshu--extension-inline {
+    display: inline;
+}
+
+body{
+    background-color: transparent
+}

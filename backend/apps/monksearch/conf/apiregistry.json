@@ -1,5 +1,5 @@
 {
     "/apps/monksearch/login" : "/apis/login.js?get=true",
     "/apps/monksearch/register" : "/apis/register.js",
-    "/apps/monksearch/search" : "/apis/search.js?get=true"
+    "/apps/monksearch/search" : "/apis/dummy_search.js?get=true"
 }

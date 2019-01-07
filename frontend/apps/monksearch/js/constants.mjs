@@ -13,13 +13,17 @@ export const APP_CONSTANTS = {
 
     SESSION_NOTE_ID: "com_monkshu_ts",
 
-    LANG_ID: "com_monkshu_lang",
-
     // Login constants
     MIN_PASS_LENGTH: 8,
     API_LOGIN: BACKEND+"/apps/monksearch/login",
     API_REGISTER: BACKEND+"/apps/monksearch/register",
     API_SEARCH: BACKEND+"/apps/monksearch/search",
     BCRYPT_SALT: "$2a$10$VFyiln/PpFyZc.ABoi4ppf",
-    USERID: "id"
+    USERID: "id",
+    USER_ROLE: "user",
+    GUEST_ROLE: "guest",
+    PERMISSIONS_MAP: {
+        user:[APP_PATH+"/main.html", APP_PATH+"/login.html", $$.MONKSHU_CONSTANTS.ERROR_THTML], 
+        guest:[APP_PATH+"/login.html", $$.MONKSHU_CONSTANTS.ERROR_THTML]
+    }
 }

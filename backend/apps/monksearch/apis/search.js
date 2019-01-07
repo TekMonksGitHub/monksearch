@@ -19,7 +19,7 @@ let cache = {};
 		let items = [];
 		for (let i = 0; i < 5; i++) {
 			let result = await getHttpsAsync("www.googleapis.com",443,"/customsearch/v1",{},
-				`key=AIzaSyAgbp53TIk65JcKQH7QlrPLNcpZ5Dorzi8&cx=012981187543195721877:67rxdffruri&num=10&start=${(10*i)+1}&q=${req.q}`);
+				`key=AIzaSyAEuWcPTzrPPmeyILj8k2lint7qhxs_Zvs&cx=012981187543195721877:67rxdffruri&num=10&start=${(10*i)+1}&q=${req.q}`);
 			items.push(...result.items);
 		}
 		cache[req.q.toLowerCase()] = items;

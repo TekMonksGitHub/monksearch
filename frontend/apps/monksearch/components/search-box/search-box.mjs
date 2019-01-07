@@ -13,9 +13,12 @@ function search() {
 	if (search_box._receiver) search_box._receiver(searchTerm);
 }
 
+function register(roles) {
+	// convert this all into a WebComponent so we can use it
+	monkshu_component.register("search-box", `${APP_CONSTANTS.APP_PATH}/components/search-box/search-box.html`, 
+		search_box, roles);
+}
+
 const trueWebComponentMode = true;	// making this false renders the component without using Shadow DOM
 
-export const search_box = {bindSearchEvent, search, trueWebComponentMode}
-
-// convert this all into a WebComponent so we can use it
-monkshu_component.register("search-box", `${APP_CONSTANTS.APP_PATH}/components/search-box/search-box.html`, search_box);
+export const search_box = {bindSearchEvent, search, trueWebComponentMode, register};

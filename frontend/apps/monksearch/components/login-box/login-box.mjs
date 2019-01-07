@@ -21,9 +21,12 @@ function _handleLoginResult(result) {
 	}
 }
 
+function register(roles) {
+	// convert this all into a WebComponent so we can use it
+	monkshu_component.register("login-box", `${APP_CONSTANTS.APP_PATH}/components/login-box/login-box.html`,
+		login_box, roles);
+}
+
 const trueWebComponentMode = true;	// making this false renders the component without using Shadow DOM
 
-export const login_box = {signin, trueWebComponentMode}
-
-// convert this all into a WebComponent so we can use it
-monkshu_component.register("login-box", `${APP_CONSTANTS.APP_PATH}/components/login-box/login-box.html`, login_box);
+export const login_box = {signin, trueWebComponentMode, register}

@@ -14,7 +14,9 @@ License: GPL2 - see enclosed license.txt file.
 	<link rel="stylesheet" type="text/css" href="./css/main.css">
 	<script type="module">
 	import {search_box} from "./components/search-box/search-box.mjs";
+	search_box.register([APP_CONSTANTS.USER_ROLE]);
 	import {data_table} from "./components/data-table/data-table.mjs";
+	data_table.register([APP_CONSTANTS.USER_ROLE]);
 	import("./js/main.mjs").then(result => {result.main.bindSearchAndDataTables(); window.main = result.main;});
 	</script>
 	

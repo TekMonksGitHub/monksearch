@@ -6,19 +6,17 @@ import {router} from "/framework/js/router.mjs";
 import {monkshu_component} from "/framework/js/monkshu_component.mjs";
 import {loginmanager} from "../../js/loginmanager.mjs";
 
-async function signin() {	
-	let id = login_box.shadowRoot.getElementById("userid").value;
-	let pass = login_box.shadowRoot.getElementById("pass").value;
+async function signin(signInButton) {	
+	let shadowRoot = login_box.getShadowRootByContainedElement(signInButton);
+	let userid = shadowRoot.getElementById("userid").value;
+	let pass = shadowRoot.getElementById("pass").value;
 		
-	_handleLoginResult(await loginmanager.signin(id, pass));
+	_handleLoginResult(await loginmanager.signin(userid, pass), shadowRoot);
 }
 
-function _handleLoginResult(result) {
+function _handleLoginResult(result, shadowRoot) {
 	if (result) router.loadPage(APP_CONSTANTS.MAIN_THTML);
-	else {
-		let shadowRoot = login_box.shadowRoot;
-		shadowRoot.getElementById("notifier").MaterialSnackbar.showSnackbar({message:"Login Failed"})
-	}
+	else shadowRoot.getElementById("notifier").MaterialSnackbar.showSnackbar({message:"Login Failed"});
 }
 
 function register(roles) {
@@ -27,6 +25,6 @@ function register(roles) {
 		login_box, roles);
 }
 
-const trueWebComponentMode = true;	// making this false renders the component without using Shadow DOM
+const trueWebComponentMode = false;	// making this false renders the component without using Shadow DOM
 
 export const login_box = {signin, trueWebComponentMode, register}

@@ -1,27 +1,18 @@
 /* 
  * (C) 2015 TekMonks. All rights reserved.
- * License: MIT - see enclosed LICENSE file.
  */
-const {promisify} = require("util");
-const existsAsync = promisify(require("fs").exists);
+const userid = require(`${__dirname}/lib/userid.js`);
 
 exports.doService = async jsonReq => {
-	if (!validateRequest(jsonReq)) return CONSTANTS.FALSE_RESULT;
+	if (!validateRequest(jsonReq)) {LOG.error("Validation failure."); return CONSTANTS.FALSE_RESULT;}
 	
 	LOG.debug("Got login request for ID: " + jsonReq.id);
 
-	try{
-		let dirToCheck = await require(`${__dirname}/lib/userid.js`).getUserPath(jsonReq.id);
-		LOG.info(`Backend path: ${dirToCheck}`);
+	let result = await userid.login(jsonReq.id);
 
-		let exists = await existsAsync(dirToCheck);
+	if (result.result) LOG.info(`User logged in: ${result.name}`); else LOG.error(`Bad login for id: ${jsonReq.id}`);
 
-		LOG.info(`Login result: ${exists}`);
-		return {result: exists};
-	} catch (err) {
-		LOG.error(`Login error: ${err}`); 
-		return CONSTANTS.FALSE_RESULT
-	}
+	return {result: result.result};
 }
 
-let validateRequest = jsonReq => (jsonReq && jsonReq.id);
+const validateRequest = jsonReq => (jsonReq && jsonReq.id);

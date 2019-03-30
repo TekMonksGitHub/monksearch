@@ -14,10 +14,8 @@ License: GPL2 - see enclosed license.txt file.
 	<link rel="stylesheet" type="text/css" href="./css/main.css">
 
 	<script type="module">
-	import {search_box} from "./components/search-box/search-box.mjs";
-	search_box.register([APP_CONSTANTS.USER_ROLE]);
-	import {data_table} from "./components/data-table/data-table.mjs";
-	data_table.register([APP_CONSTANTS.USER_ROLE]);
+	import {search_box} from "./components/search-box/search-box.mjs"; search_box.register();
+	import {data_table} from "./components/data-table/data-table.mjs"; data_table.register();
 
 	import("./js/main.mjs").then(result => {
 		result.main.bindSearchAndDataTables();
@@ -35,8 +33,8 @@ License: GPL2 - see enclosed license.txt file.
 </div>
 
 <div class="maincontent">
-	<search-box></search-box>
-	<data-table></data-table>
+	<search-box roles="[APP_CONSTANTS.USER_ROLE]"></search-box>
+	<data-table roles="[APP_CONSTANTS.USER_ROLE]"></data-table>
 </div>
 
 </body>

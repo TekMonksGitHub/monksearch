@@ -37,10 +37,9 @@ async function displayResults(data, resultsPerPage) {
 
 const trueWebComponentMode = true;	// google charts won't work inside web components!
 
-function register(roles) {
+function register() {
 	// convert this all into a WebComponent so we can use it
-	monkshu_component.register("data-table", `${APP_CONSTANTS.APP_PATH}/components/data-table/data-table.html`, 
-		data_table, roles);
+	monkshu_component.register("data-table", `${APP_CONSTANTS.APP_PATH}/components/data-table/data-table.html`, data_table);
 }
 
 export const data_table = {displayResults, trueWebComponentMode, register}

@@ -19,10 +19,9 @@ function _handleLoginResult(result, shadowRoot) {
 	else shadowRoot.getElementById("notifier").MaterialSnackbar.showSnackbar({message:"Login Failed"});
 }
 
-function register(roles) {
+function register() {
 	// convert this all into a WebComponent so we can use it
-	monkshu_component.register("login-box", `${APP_CONSTANTS.APP_PATH}/components/login-box/login-box.html`,
-		login_box, roles);
+	monkshu_component.register("login-box", `${APP_CONSTANTS.APP_PATH}/components/login-box/login-box.html`, login_box);
 }
 
 const trueWebComponentMode = false;	// making this false renders the component without using Shadow DOM

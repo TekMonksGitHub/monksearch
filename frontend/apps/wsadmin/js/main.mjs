@@ -1,30 +1,43 @@
 /* 
- * (C) 2015 TekMonks. All rights reserved.
+ * (C) 2020 TekMonks. All rights reserved.
  * License: MIT - see enclosed license.txt file.
  */
 
-import {loginmanager} from "./loginmanager.mjs";
+import {loginmanager} from "./loginmanager.mjs"
 
-function bindSearchAndDataTables() {
-	monkshu_env.components["search-box"].bindSearchEvent(async searchText => {
-		let results = await(await fetch(`${APP_CONSTANTS.API_SEARCH}?q=${searchText}`)).json();
-		if (results.result) {
+let menuOpen, ignoreClick;
 
-			let rowData = [];
-			results.results.forEach(item => rowData.push({"column":[item.title, item.snippet, item.formattedUrl]}));
+function registerHandlers() {
+    menuOpen = false; ignoreClick = false; 
 
-			let data = {
-				"headers":["Title", "Snippet", "Link"],
-				"rows":rowData
-			}
+    document.addEventListener("click", e => {   // close menu if clicked outside
+        if (!menuOpen) return;
+        if (ignoreClick) {ignoreClick = false; return;}
 
-			monkshu_env.components["data-table"].displayResults(data, 10);
-		}
-	});
+        if (e.target.closest("#menubutton")) {
+            let menuDiv = document.querySelector("div#menu"); menuDiv.style.maxHeight = 0; 
+            menuDiv.classList.remove("visible");
+
+            document.querySelector("span#menubutton").innerHTML="☰";
+            menuOpen = false;
+        }
+    });
+}
+
+function showMenu() {
+    if (menuOpen) return;
+
+    let menuDiv = document.querySelector("div#menu"); menuDiv.style.maxHeight = menuDiv.scrollHeight+"px";
+    menuDiv.classList.add("visible");
+
+    document.querySelector("span#menubutton").innerHTML="X";
+
+    menuOpen = true;
+    ignoreClick = true;
 }
 
 function logout() {
-	loginmanager.logout();
+    loginmanager.logout();
 }
 
-export const main = {bindSearchAndDataTables, logout}
+export const main = {showMenu, logout, registerHandlers}

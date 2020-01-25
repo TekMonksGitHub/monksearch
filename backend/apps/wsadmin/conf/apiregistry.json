@@ -1,5 +1,6 @@
 {
     "/apps/wsadmin/login" : "/apis/login.js?get=true",
-    "/apps/wsadmin/register" : "/apis/register.js",
-    "/apps/wsadmin/search" : "/apis/dummy_search.js?get=true"
+    "/apps/wsadmin/getfiles" : "/apis/getfiles.js?get=true",
+    "/apps/wsadmin/uploadfile" : "/apis/uploadfile.js",
+    "/apps/wsadmin/deletefile" : "/apis/deletefile.js?get=true"
 }

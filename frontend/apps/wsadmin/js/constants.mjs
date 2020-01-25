@@ -8,17 +8,15 @@ const APP_NAME = "wsadmin";
 const APP_PATH = `${FRONTEND}/apps/${APP_NAME}`;
 
 export const APP_CONSTANTS = {
-    FRONTEND, BACKEND, APP_PATH,
-    MAIN_THTML: APP_PATH+"/main.html",
-    LOGIN_THTML: APP_PATH+"/login.html",
+    FRONTEND, BACKEND, APP_PATH, APP_NAME,
+    MAIN_HTML: APP_PATH+"/main.html?path=/",
+    LOGIN_HTML: APP_PATH+"/login.html",
 
     SESSION_NOTE_ID: "com_monkshu_ts",
 
     // Login constants
     MIN_PASS_LENGTH: 8,
     API_LOGIN: BACKEND+"/apps/"+APP_NAME+"/login",
-    API_REGISTER: BACKEND+"/apps/"+APP_NAME+"/register",
-    API_SEARCH: BACKEND+"/apps/"+APP_NAME+"/search",
     BCRYPT_SALT: "$2a$10$VFyiln/PpFyZc.ABoi4ppf",
     USERID: "id",
     USER_ROLE: "user",

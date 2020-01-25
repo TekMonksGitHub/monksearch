@@ -1,0 +1,165 @@
+<!--
+/* 
+ * (C) 2018 TekMonks. All rights reserved.
+ * License: MIT - see enclosed license.txt file.
+ */
+ -->
+
+<style>
+    @import url('https://fonts.googleapis.com/css?family=Raleway:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i&amp;display=swap');
+    
+    body{
+        margin: 0; padding: 0;
+        font-family: Raleway;
+    }
+
+    div#container {
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: start;
+    }
+
+    div#container > span > img {
+        width: 90px;
+    }
+
+    div#container > span {
+        display: flex;
+        flex-direction: column;
+        padding: 40px;
+        text-align: center;
+        font-family: Raleway;
+    }
+
+    div#contextmenu {
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+        cursor: default;
+        position: absolute;
+        visibility: hidden;
+        background-color: rgba(255, 255, 255, 1);
+        opacity: 1;
+        z-index: 10;
+        border: 1px solid gray;
+        width: 10em;
+    }
+
+    div#contextmenu.visible{
+        opacity: 1;
+        visibility: visible;
+        height: auto;
+    }
+
+    div#contextmenu > span.hidden{
+        display: none;
+    }
+
+    div#contextmenu > span {
+        padding: 10px;
+        width: auto;
+        font-size: smaller;
+    }
+
+    div#contextmenu > span:hover {
+        background-color: rgba(0, 0, 0, 0.185)
+    }
+
+    div#contextmenu > span#hr, div#contextmenu > span#hr:hover {
+        padding: 0px;
+        width: auto;
+        background-color: #ffffff;
+    }
+
+    div#contextmenu > span#hr > hr {
+        border: 0.5px solid #000000;
+    }
+
+    input#upload { display: none; }
+
+    div#modal {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        opacity: 0.4;
+        background:rgba(0, 0, 0, 0.418);
+        z-index: 100;
+    }
+
+    div#progresscontainer {
+        width: 30%;
+        height: 30%;
+        top: 35%;
+        left: 35%;
+        opacity: 0.98;
+        background:rgba(255, 255, 255);
+        padding: 40px;
+        position: absolute;
+        z-index: 101;
+        border-radius: 10px;
+        display: inline-flex;
+        flex-flow: column;
+    }
+
+    div#progresscontainer > div#progress {
+        display: inline-flex;
+        margin-top: 1em;
+    }
+
+    div#progress > span#name {
+        width: 40%;
+        margin-right: 10px; 
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+    }
+
+    div#progress > span#bar {
+        width: 60%;
+        background-color: #00000054;
+        box-sizing: border-box;
+        height: 1em;
+        display: block;
+        border-radius: 0.1em;
+    }
+
+    div#progress > span#bar > span#percent {
+        width: 10%;
+        background-color: #000000;
+        box-sizing: border-box;
+        height: 1em;
+        display: block;
+        border-radius: 0.1em;
+    }
+</style>
+
+{{{styleBody}}}
+
+<div id="container">
+    {{#entries}}
+    <span><img src="./img/{{#stats.directory}}folder{{/stats.directory}}{{#stats.file}}file{{/stats.file}}{{#stats.back}}back{{/stats.back}}{{#stats.home}}home{{/stats.home}}{{#stats.upload}}upload{{/stats.upload}}.png" onclick='monkshu_env.components["file-manager"].handleClick(this, "{{path}}", "{{#stats.directory}}true{{/stats.directory}}{{#stats.home}}true{{/stats.home}}{{#stats.back}}true{{/stats.back}}{{#stats.upload}}false{{/stats.upload}}");' id="{{#stats.home}}home{{/stats.home}}{{#stats.back}}back{{/stats.back}}{{#stats.upload}}upload{{/stats.upload}}">{{name}}</span>
+    {{/entries}}
+    <input id="upload" type="file" multiple onchange='monkshu_env.components["file-manager"].uploadFiles(this, this.files)'>
+</div>
+
+<div id="contextmenu">
+    <span onclick='monkshu_env.components["file-manager"].editFile(this)'>{{i18n.EditFile}}</span>
+    <span id="hr"><hr></span>
+    <span id="deletefile" onclick='monkshu_env.components["file-manager"].deleteFile(this)'>{{i18n.DeleteFile}}</span>
+</div>
+
+<template id="progressdialog">
+<!-- {{=<% %>=}} 
+<div id="modal">&nbsp;</div>
+<div id="progresscontainer">
+    {{#files}}
+    <div id="progress"><span id="name">{{name}}</span><span id="bar"><span id="percent" style="width: {{percent}}%!important"></span></span></div>
+    {{/files}}
+</div>
+<%={{ }}=%> -->
+</template>
+<div id="templateholder"></div>
+
+</div>

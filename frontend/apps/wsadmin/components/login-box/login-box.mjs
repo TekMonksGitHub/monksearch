@@ -25,7 +25,7 @@ async function signin(signInButton) {
 }
 
 function _handleLoginResult(result, shadowRoot) {
-	if (result) router.loadPage(APP_CONSTANTS.MAIN_THTML);
+	if (result) router.loadPage(APP_CONSTANTS.MAIN_HTML);
 	else shadowRoot.getElementById("notifier").MaterialSnackbar.showSnackbar({message:"Login Failed"});
 }
 
@@ -34,6 +34,6 @@ function register() {
 	monkshu_component.register("login-box", `${APP_CONSTANTS.APP_PATH}/components/login-box/login-box.html`, login_box);
 }
 
-const trueWebComponentMode = false;	// making this false renders the component without using Shadow DOM
+const trueWebComponentMode = true;	// making this false renders the component without using Shadow DOM
 
 export const login_box = {signin, trueWebComponentMode, register, elementConnected}

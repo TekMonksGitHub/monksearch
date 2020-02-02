@@ -2,5 +2,7 @@
     "/apps/wsadmin/login" : "/apis/login.js?get=true",
     "/apps/wsadmin/getfiles" : "/apis/getfiles.js?get=true",
     "/apps/wsadmin/uploadfile" : "/apis/uploadfile.js",
-    "/apps/wsadmin/deletefile" : "/apis/deletefile.js?get=true"
+    "/apps/wsadmin/deletefile" : "/apis/deletefile.js?get=true",
+    "/apps/wsadmin/createfile" : "/apis/createfile.js?get=true",
+    "/apps/wsadmin/renamefile" : "/apis/renamefile.js?get=true"
 }

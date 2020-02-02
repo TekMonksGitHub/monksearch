@@ -13,7 +13,14 @@ export const i18n = {
 "PasswordTooShort" : "Password too short",
 "Search": "Search",
 "Upload": "Upload",
+"Create": "Create",
 "CreateFile": "Create file...",
 "DeleteFile": "Delete...",
-"EditFile": "Open..."
+"EditFile": "Open...",
+"Path": "Name",
+"IsDirectory": "Is Directory?",
+"OK": "OK",
+"Cancel": "Cancel",
+"NewName": "Name",
+"Rename": "Rename"
 }

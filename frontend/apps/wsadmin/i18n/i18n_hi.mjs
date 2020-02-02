@@ -13,7 +13,14 @@ export const i18n = {
 "PasswordTooShort" : "पासवर्ड बहुत छोटा है",
 "Search":"खोजिए",
 "Upload":"अपलोड करें",
+"Create": "नई",
 "CreateFile": "फ़ाइल बनाए...",
 "DeleteFile": "फ़ाइल हटाएँ...",
-"EditFile": "खोलें..."
+"EditFile": "खोलें...",
+"Path": "नाम",
+"IsDirectory": "क्या ये डिरेक्टरी है?",
+"OK": "ओके",
+"Cancel": "रद्द करो",
+"NewName": "नाम",
+"Rename": "नया नाम"
 }

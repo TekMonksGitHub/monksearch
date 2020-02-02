@@ -13,7 +13,14 @@ export const i18n = {
 "PasswordTooShort" : "パスワードが短すぎます",
 "Search": "サーチ",
 "Upload":"アップロードする",
+"Create": "作成する",
 "CreateFile": "新しいファイル...",
 "DeleteFile": "ファイルを削除する...",
-"EditFile": "開いた..."
+"EditFile": "開いた...",
+"Path": "名前",
+"IsDirectory": "これはフォルダーですか？",
+"OK": "はい",
+"Cancel": "キャンセル",
+"NewName": "名前",
+"Rename": "新しい名前"
 }

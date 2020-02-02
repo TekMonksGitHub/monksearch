@@ -32,7 +32,7 @@
     }
 
     div#contextmenu {
-        display: flex;
+        display: none;
         flex-direction: column;
         text-align: left;
         cursor: default;
@@ -49,6 +49,7 @@
         opacity: 1;
         visibility: visible;
         height: auto;
+        display: flex;
     }
 
     div#contextmenu > span.hidden{
@@ -88,7 +89,7 @@
         z-index: 100;
     }
 
-    div#progresscontainer {
+    div#progresscontainer, div#filepathcontainer {
         width: 30%;
         height: 30%;
         top: 35%;
@@ -133,13 +134,77 @@
         display: block;
         border-radius: 0.1em;
     }
+
+    div#filepathcontainer > form > input[type=text] { 
+        width: 100%;
+        padding: 20px;
+        margin: 0;
+        box-sizing: border-box;
+        border-radius: 10px;
+        border-style: none;
+        outline: none;
+        text-align: left;
+        font-family: 'Raleway';
+        background-color: #F0F8FF;
+        -webkit-box-shadow: 0 0 0px 1000px #F0F8FF inset;
+        box-shadow: 0 0 0px 1000px #F0F8FF inset;
+    }
+
+    div#filepathcontainer > form > div {
+        display: inline-flex;
+        flex-flow: row nowrap;
+        margin-top: 40px;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    div#filepathcontainer > form > div > span { 
+        width: calc(50% - 20px);
+        padding: 20px;
+        margin: 0;
+        box-sizing: border-box;
+        border-radius: 30px;
+        border-style: none;
+        outline: none;
+        text-align: center;
+        font-family: 'Raleway';
+        background-color: #F0F8FF;
+        -webkit-box-shadow: 0 0 0px 1000px #F0F8FF inset;
+        box-shadow: 0 0 0px 1000px #F0F8FF inset;
+        font-size: 0.8em;
+        cursor: default;
+    }
+
+    div#filepathcontainer > form > div > span.checked {
+        background-color: rgb(42, 139, 250);
+        -webkit-box-shadow: 0 0 0px 1000px rgb(42, 139, 250) inset;
+        box-shadow: 0 0 0px 1000px rgb(42, 139, 250) inset;
+        color:rgba(255, 255, 255, 1);
+    }
+
+    div#filepathcontainer > form > div > button {
+        width: calc(50% - 40px);
+        padding: 20px;
+        box-sizing: border-box;
+        border-radius: 10px;
+        border-style: none;
+        outline: none;
+        text-align: center;
+        font-family: 'Raleway';
+    }
+
+    div#filepathcontainer > form > div > button:hover {
+        filter: brightness(98%);
+        transition: all 0.3s ease;
+    }
+
 </style>
 
 {{{styleBody}}}
 
 <div id="container">
     {{#entries}}
-    <span><img src="./img/{{#stats.directory}}folder{{/stats.directory}}{{#stats.file}}file{{/stats.file}}{{#stats.back}}back{{/stats.back}}{{#stats.home}}home{{/stats.home}}{{#stats.upload}}upload{{/stats.upload}}.png" onclick='monkshu_env.components["file-manager"].handleClick(this, "{{path}}", "{{#stats.directory}}true{{/stats.directory}}{{#stats.home}}true{{/stats.home}}{{#stats.back}}true{{/stats.back}}{{#stats.upload}}false{{/stats.upload}}");' id="{{#stats.home}}home{{/stats.home}}{{#stats.back}}back{{/stats.back}}{{#stats.upload}}upload{{/stats.upload}}">{{name}}</span>
+    <span><img src="./img/{{#stats.directory}}folder{{/stats.directory}}{{#stats.file}}file{{/stats.file}}{{#stats.back}}back{{/stats.back}}{{#stats.home}}home{{/stats.home}}{{#stats.upload}}upload{{/stats.upload}}{{#stats.create}}create{{/stats.create}}{{#stats.rename}}rename{{/stats.rename}}.png" onclick='monkshu_env.components["file-manager"].handleClick(this, "{{path}}", "{{#stats.directory}}true{{/stats.directory}}{{#stats.home}}true{{/stats.home}}{{#stats.back}}true{{/stats.back}}{{#stats.upload}}false{{/stats.upload}}{{#stats.create}}false{{/stats.create}}{{#stats.rename}}false{{/stats.rename}}");' id="{{#stats.home}}home{{/stats.home}}{{#stats.back}}back{{/stats.back}}{{#stats.upload}}upload{{/stats.upload}}{{#stats.create}}create{{/stats.create}}{{#stats.rename}}rename{{/stats.rename}}">{{name}}</span>
     {{/entries}}
     <input id="upload" type="file" multiple onchange='monkshu_env.components["file-manager"].uploadFiles(this, this.files)'>
 </div>
@@ -147,6 +212,7 @@
 <div id="contextmenu">
     <span onclick='monkshu_env.components["file-manager"].editFile(this)'>{{i18n.EditFile}}</span>
     <span id="hr"><hr></span>
+    <span id="renamefile" onclick='monkshu_env.components["file-manager"].renameFile(this)'>{{i18n.Rename}}</span>
     <span id="deletefile" onclick='monkshu_env.components["file-manager"].deleteFile(this)'>{{i18n.DeleteFile}}</span>
 </div>
 
@@ -160,6 +226,32 @@
 </div>
 <%={{ }}=%> -->
 </template>
+<template id="createfiledialog">
+    <!-- {{=<% %>=}} 
+    <div id="modal">&nbsp;</div>
+    <div id="filepathcontainer"><form onsubmit="_=>{}; return false;">
+        <input type="text" id="path" placeholder="{{i18n.Path}}" required>
+        <div>
+        <span class="checked" id="filetoggle" onclick="this.classList.add('checked'); this.nextSibling.classList.remove('checked'); window.createDir=false;">File</span><span id="dirtoggle" onclick="this.classList.add('checked'); this.previousSibling.classList.remove('checked'); window.createDir=true;">Directory</span>
+        </div>
+        <div>
+        <button type="submit" onclick='monkshu_env.components["file-manager"].createFile(this, window.createDir);'>{{i18n.OK}}</button>
+        <button onclick='monkshu_env.components["file-manager"].hideDialog(this);'>{{i18n.Cancel}}</button>
+        </div>
+    </form></div>
+    <%={{ }}=%> -->
+</template>
+<template id="renamefiledialog">
+    <!-- {{=<% %>=}} 
+    <div id="modal">&nbsp;</div>
+    <div id="filepathcontainer"><form onsubmit="_=>{}; return false;">
+        <input type="text" id="renamepath" placeholder="{{i18n.NewName}}" required>
+        <p>&nbsp;</p>
+        <div>
+        <button type="submit" onclick='monkshu_env.components["file-manager"].doRename(this);'>{{i18n.OK}}</button>
+        <button onclick='monkshu_env.components["file-manager"].hideDialog(this);'>{{i18n.Cancel}}</button>
+        </div>
+    </form></div>
+    <%={{ }}=%> -->
+</template>
 <div id="templateholder"></div>
-
-</div>

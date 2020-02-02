@@ -20,17 +20,17 @@ exports.doService = async jsonReq => {
 	if (!API_CONSTANTS.isSubdirectory(fullpath, CONF.CMS_ROOT)) {LOG.error(`Subdir validation failure: ${jsonReq.path}`); return CONSTANTS.FALSE_RESULT;}
 
 	try {
-        await rmrfdir(fullpath); return CONSTANTS.TRUE_RESULT;
+        await rmrf(fullpath); return CONSTANTS.TRUE_RESULT;
 	} catch (err) {LOG.error(`Error deleting  path: ${fullpath}, error is: ${err}`); return CONSTANTS.FALSE_RESULT;}
 }
 
-async function rmrfdir(path) {
+async function rmrf(path) {
 	if ((await statAsync(path)).isFile()) {await unlinkAsync(path); return;}
 
 	const entries = await readdirAsync(path);
 	for (const entry of entries) {
 		const stats = await statAsync(`${path}/${entry}`);
-		if (stats.isFile()) await unlinkAsync(`${path}/${entry}`); else if (stats.isDirectory()) await rmrfdir(`${path}/${entry}`);
+		if (stats.isFile()) await unlinkAsync(`${path}/${entry}`); else if (stats.isDirectory()) await rmrf(`${path}/${entry}`);
 	}
 	await rmdirAsync(path);
 }

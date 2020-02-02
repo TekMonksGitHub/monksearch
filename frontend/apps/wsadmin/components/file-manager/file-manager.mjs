@@ -16,6 +16,10 @@ const DIALOG_HIDE_WAIT = 1300;
 const API_GETFILES = APP_CONSTANTS.BACKEND+"/apps/"+APP_CONSTANTS.APP_NAME+"/getfiles";
 const API_UPLOADFILE = APP_CONSTANTS.BACKEND+"/apps/"+APP_CONSTANTS.APP_NAME+"/uploadfile";
 const API_DELETEFILE = APP_CONSTANTS.BACKEND+"/apps/"+APP_CONSTANTS.APP_NAME+"/deletefile";
+const API_CREATEFILE = APP_CONSTANTS.BACKEND+"/apps/"+APP_CONSTANTS.APP_NAME+"/createfile";
+const API_RENAMEFILE = APP_CONSTANTS.BACKEND+"/apps/"+APP_CONSTANTS.APP_NAME+"/renamefile";
+
+const DIALOG_HOST_ELEMENT_ID = "templateholder";
 
 const IO_CHUNK_SIZE = 4096;   // 4K read buffer
 
@@ -26,6 +30,7 @@ async function elementConnected(element) {
    let resp = await xhr.rest(API_GETFILES, "GET", {path});
    if (!resp.result) return;
 
+   resp.entries.unshift({name: await i18n.get("Create", session.get($$.MONKSHU_CONSTANTS.LANG_ID)), path, stats:{create: true}});
    resp.entries.unshift({name: await i18n.get("Upload", session.get($$.MONKSHU_CONSTANTS.LANG_ID)), path, stats:{upload: true}});
 
    if (!path.match(/^[\/]+$/g)) { // add in back and home buttons
@@ -56,7 +61,10 @@ async function elementRendered(element) {
 }
 
 function handleClick(element, path, isDirectory) {
-   selectedPath = path.replace(/[\/]+/g,"/"); selectedIsDirectory = util.parseBoolean(isDirectory); selectedElement = element;
+   selectedPath = path?path.replace(/[\/]+/g,"/"):selectedPath; 
+   selectedIsDirectory = (isDirectory!== undefined) ? util.parseBoolean(isDirectory) : selectedIsDirectory;
+   selectedElement = element;
+   
    if (timer) {clearTimeout(timer); editFile(element); timer=null;}
    else timer = setTimeout(_=> {timer=null;showMenu(element)}, 200);
 }
@@ -64,6 +72,10 @@ function handleClick(element, path, isDirectory) {
 function upload(containedElement) {
    filesAndPercents = {};  // reset progress indicator bucket
    file_manager.getShadowRootByContainedElement(containedElement).querySelector("input#upload").click();
+}
+
+function create(containedElement) {
+   showDialog(containedElement, "createfiledialog");
 }
 
 const uploadFiles = async (element, files) => {for (const file of files) await uploadAFile(element, file)}
@@ -100,11 +112,13 @@ async function uploadAFile(element, file) {
 function showMenu(element) {
    const shadowRoot = file_manager.getShadowRootByContainedElement(element);
 
-   if (element.getAttribute("id") && (element.getAttribute("id") == "home" || element.getAttribute("id") == "back" || element.getAttribute("id") == "upload")) {
+   if (element.getAttribute("id") && (element.getAttribute("id") == "home" || element.getAttribute("id") == "back" || element.getAttribute("id") == "upload" || element.getAttribute("id") == "create")) {
       shadowRoot.querySelector("div#contextmenu > span#hr").classList.add("hidden"); 
+      shadowRoot.querySelector("div#contextmenu > span#renamefile").classList.add("hidden");
       shadowRoot.querySelector("div#contextmenu > span#deletefile").classList.add("hidden");  
    } else {
       shadowRoot.querySelector("div#contextmenu > span#hr").classList.remove("hidden"); 
+      shadowRoot.querySelector("div#contextmenu > span#renamefile").classList.remove("hidden");
       shadowRoot.querySelector("div#contextmenu > span#deletefile").classList.remove("hidden");  
    }
 
@@ -126,30 +140,39 @@ function editFile(_element) {
    }
 
    if (selectedElement.id == "upload") upload(selectedElement);
+
+   if (selectedElement.id == "create") create(selectedElement);
 }
 
 async function showProgress(element, currentBlock, totalBlocks, fileName) {
-   const templateID = "progressdialog"; const hostElementID = "templateholder";
-   const shadowRoot = file_manager.getShadowRootByContainedElement(element);
+   const templateID = "progressdialog"; 
 
-   let template = shadowRoot.querySelector(`template#${templateID}`).innerHTML; 
-   const matches = /<!--([\s\S]+)-->/g.exec(template);
-   if (!matches) return; template = matches[1]; // can't show progress if the template is bad
    filesAndPercents[fileName] = Math.round(currentBlock/totalBlocks*100); 
    const files = []; for (const file of Object.keys(filesAndPercents)) files.push({name: file, percent: filesAndPercents[file]});
-   const rendered = await router.expandPageData(template, session.get($$.MONKSHU_CONSTANTS.PAGE_URL), {files});
-   shadowRoot.querySelector(`#${hostElementID}`).innerHTML = rendered;
 
-   closeProgressAndReloadIfAllFilesUploaded(element, hostElementID, filesAndPercents);
+   await showDialog(element, templateID, {files});
+
+   closeProgressAndReloadIfAllFilesUploaded(element, filesAndPercents);
 }
 
-function closeProgressAndReloadIfAllFilesUploaded(element, hostElementID, filesAndPercents) {
+function closeProgressAndReloadIfAllFilesUploaded(element, filesAndPercents) {
    for (const file of Object.keys(filesAndPercents)) if (filesAndPercents[file] != 100) return;
-   setTimeout(_=>{hideDialog(element, hostElementID); router.reload();}, DIALOG_HIDE_WAIT); // hide dialog if all files done, after a certian wait
+   setTimeout(_=>{hideDialog(element); router.reload();}, DIALOG_HIDE_WAIT); // hide dialog if all files done, after a certian wait
 }
 
-function hideDialog(element, hostElementID) {
-   const hostElement = file_manager.getShadowRootByContainedElement(element).querySelector(`#${hostElementID}`);
+async function showDialog(element, dialogTemplateID, data={}) {
+   const shadowRoot = file_manager.getShadowRootByContainedElement(element);
+
+   let template = shadowRoot.querySelector(`template#${dialogTemplateID}`).innerHTML; 
+   const matches = /<!--([\s\S]+)-->/g.exec(template);
+   if (!matches) return; template = matches[1]; // can't show progress if the template is bad
+   
+   const rendered = await router.expandPageData(template, session.get($$.MONKSHU_CONSTANTS.PAGE_URL), data);
+   shadowRoot.querySelector(`#${DIALOG_HOST_ELEMENT_ID}`).innerHTML = rendered;
+}
+
+function hideDialog(element) {
+   const hostElement = file_manager.getShadowRootByContainedElement(element).querySelector(`#${DIALOG_HOST_ELEMENT_ID}`);
    while (hostElement && hostElement.firstChild) hostElement.removeChild(hostElement.firstChild);
 }
 
@@ -158,6 +181,28 @@ function register() {
    monkshu_component.register("file-manager", `${APP_CONSTANTS.APP_PATH}/components/file-manager/file-manager.html`, file_manager);
 }
 
+async function createFile(element, isDirectory=false) {
+   const path = file_manager.getShadowRootByContainedElement(element).querySelector("#path").value;
+
+   let resp = await xhr.rest(API_CREATEFILE, "GET", {path, isDirectory: isDirectory});
+   if (resp.result) router.reload(); else alert("Error");
+
+   hideDialog(element);
+}
+
+const renameFile = element => showDialog(element, "renamefiledialog");
+
+async function doRename(element) {
+   const newName = file_manager.getShadowRootByContainedElement(element).querySelector("#renamepath").value;
+   const subpaths = selectedPath.split("/"); subpaths.splice(subpaths.length-1, 1, newName);
+   const newPath = subpaths.join("/");
+
+   let resp = await xhr.rest(API_RENAMEFILE, "GET", {old: selectedPath, new: newPath});
+   if (resp.result) router.reload(); else alert("Error");
+
+   hideDialog(element);
+}
+
 const trueWebComponentMode = true;	// making this false renders the component without using Shadow DOM
 
-export const file_manager = {trueWebComponentMode, register, elementConnected, elementRendered, handleClick, showMenu, deleteFile, editFile, upload, uploadFiles, hideDialog}
+export const file_manager = {trueWebComponentMode, register, elementConnected, elementRendered, handleClick, showMenu, deleteFile, editFile, upload, uploadFiles, hideDialog, createFile, renameFile, doRename}

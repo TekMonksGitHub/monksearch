@@ -66,6 +66,16 @@
         background-color: rgba(0, 0, 0, 0.185)
     }
 
+    div#contextmenu > span#deletefile, div#contextmenu > span#deletefile:hover {
+        background-color: #af1d1d;
+        color: #ffffff;
+    }
+
+    div#contextmenu > span#deletefile {
+        background-color:  #e21111;
+        color: #ffffff;
+    }
+
     div#contextmenu > span#hr, div#contextmenu > span#hr:hover {
         padding: 0px;
         width: auto;
@@ -79,21 +89,22 @@
     input#upload { display: none; }
 
     div#modal {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
+        position: fixed;
+        float: left;
+        width: 100vw;
+        height: 100vh;
+        top: 0px;
+        left: 0px;
         opacity: 0.4;
         background:rgba(0, 0, 0, 0.418);
         z-index: 100;
     }
 
     div#progresscontainer, div#filepathcontainer {
-        width: 30%;
-        height: 30%;
-        top: 35%;
-        left: 35%;
+        width: 400px;
+        height: 240px;
+        top: calc(50% - 120px);
+        left: calc(50% - 200px);
         opacity: 0.98;
         background:rgba(255, 255, 255);
         padding: 40px;
@@ -102,6 +113,38 @@
         border-radius: 10px;
         display: inline-flex;
         flex-flow: column;
+    }
+
+    div#editcontainer {
+        width: 98%;
+        height: 98%;
+        top: 1%;
+        left: 1%;
+        opacity: 0.98;
+        background:rgba(255, 255, 255);
+        padding: 40px;
+        position: absolute;
+        z-index: 101;
+        border-radius: 10px;
+        display: inline-flex;
+        flex-flow: column;
+        box-sizing: border-box;
+    }
+
+    div#editcontainer > form > textarea { 
+        width: 100%;
+        height: calc(100vh - 100% - 20px);
+        padding: 20px;
+        margin: 0;
+        box-sizing: border-box;
+        border-radius: 10px;
+        border-style: none;
+        outline: none;
+        text-align: left;
+        font-family: 'Raleway';
+        background-color: #F0F8FF;
+        -webkit-box-shadow: 0 0 0px 1000px #F0F8FF inset;
+        box-shadow: 0 0 0px 1000px #F0F8FF inset;
     }
 
     div#progresscontainer > div#progress {
@@ -150,7 +193,7 @@
         box-shadow: 0 0 0px 1000px #F0F8FF inset;
     }
 
-    div#filepathcontainer > form > div {
+    div#filepathcontainer > form > div, div#editcontainer > form > div {
         display: inline-flex;
         flex-flow: row nowrap;
         margin-top: 40px;
@@ -158,7 +201,7 @@
         width: 100%;
     }
 
-    div#filepathcontainer > form > div > span { 
+    div#filepathcontainer > form > div > span, div#editcontainer > form > div > span { 
         width: calc(50% - 20px);
         padding: 20px;
         margin: 0;
@@ -175,14 +218,14 @@
         cursor: default;
     }
 
-    div#filepathcontainer > form > div > span.checked {
+    div#filepathcontainer > form > div > span.checked, div#editcontainer > form > div > span.checked {
         background-color: rgb(42, 139, 250);
         -webkit-box-shadow: 0 0 0px 1000px rgb(42, 139, 250) inset;
         box-shadow: 0 0 0px 1000px rgb(42, 139, 250) inset;
         color:rgba(255, 255, 255, 1);
     }
 
-    div#filepathcontainer > form > div > button {
+    div#filepathcontainer > form > div > button, div#editcontainer > form > div > button {
         width: calc(50% - 40px);
         padding: 20px;
         box-sizing: border-box;
@@ -193,7 +236,7 @@
         font-family: 'Raleway';
     }
 
-    div#filepathcontainer > form > div > button:hover {
+    div#filepathcontainer > form > div > button:hover, div#editcontainer > form > div > button:hover {
         filter: brightness(98%);
         transition: all 0.3s ease;
     }
@@ -232,7 +275,7 @@
     <div id="filepathcontainer"><form onsubmit="_=>{}; return false;">
         <input type="text" id="path" placeholder="{{i18n.Path}}" required>
         <div>
-        <span class="checked" id="filetoggle" onclick="this.classList.add('checked'); this.nextSibling.classList.remove('checked'); window.createDir=false;">File</span><span id="dirtoggle" onclick="this.classList.add('checked'); this.previousSibling.classList.remove('checked'); window.createDir=true;">Directory</span>
+        <span class="checked" id="filetoggle" onclick="this.classList.add('checked'); this.nextSibling.classList.remove('checked'); window.createDir=false;">{{i18n.File}}</span><span id="dirtoggle" onclick="this.classList.add('checked'); this.previousSibling.classList.remove('checked'); window.createDir=true;">{{i18n.Directory}}</span>
         </div>
         <div>
         <button type="submit" onclick='monkshu_env.components["file-manager"].createFile(this, window.createDir);'>{{i18n.OK}}</button>
@@ -247,8 +290,21 @@
     <div id="filepathcontainer"><form onsubmit="_=>{}; return false;">
         <input type="text" id="renamepath" placeholder="{{i18n.NewName}}" required>
         <p>&nbsp;</p>
+        <p>&nbsp;</p>
         <div>
         <button type="submit" onclick='monkshu_env.components["file-manager"].doRename(this);'>{{i18n.OK}}</button>
+        <button onclick='monkshu_env.components["file-manager"].hideDialog(this);'>{{i18n.Cancel}}</button>
+        </div>
+    </form></div>
+    <%={{ }}=%> -->
+</template>
+<template id="editfiledialog">
+    <!-- {{=<% %>=}} 
+    <div id="modal">&nbsp;</div>
+    <div id="editcontainer"><form onsubmit="_=>{}; return false;">
+        <textarea id="content" required></textarea>
+        <div>
+        <button type="submit" onclick='monkshu_env.components["file-manager"].doReplaceContent(this);'>{{i18n.OK}}</button>
         <button onclick='monkshu_env.components["file-manager"].hideDialog(this);'>{{i18n.Cancel}}</button>
         </div>
     </form></div>

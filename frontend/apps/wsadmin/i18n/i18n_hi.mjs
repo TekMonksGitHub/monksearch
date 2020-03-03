@@ -15,12 +15,14 @@ export const i18n = {
 "Upload":"अपलोड करें",
 "Create": "नई",
 "CreateFile": "फ़ाइल बनाए...",
-"DeleteFile": "फ़ाइल हटाएँ...",
+"DeleteFile": "फ़ाइल हटाएँ",
 "EditFile": "खोलें...",
 "Path": "नाम",
 "IsDirectory": "क्या ये डिरेक्टरी है?",
 "OK": "ओके",
 "Cancel": "रद्द करो",
 "NewName": "नाम",
-"Rename": "नया नाम"
+"Rename": "नया नाम...",
+"File": "फ़ाइल",
+"Directory": "डायरेक्टरी"
 }

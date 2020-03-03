@@ -2,11 +2,11 @@
  * (C) 2020 TekMonks. All rights reserved.
  * License: MIT - see enclosed license.txt file.
  */
-import {xhr} from "/framework/js/xhr.mjs";
 import {i18n} from "/framework/js/i18n.mjs";
 import {util} from "/framework/js/util.mjs";
 import {router} from "/framework/js/router.mjs";
 import {session} from "/framework/js/session.mjs";
+import {apimanager as apiman} from "/framework/js/apimanager.mjs";
 import {monkshu_component} from "/framework/js/monkshu_component.mjs";
 
 let mouseX, mouseY, menuOpen, timer, selectedPath, selectedIsDirectory, selectedElement, filesAndPercents;
@@ -18,6 +18,7 @@ const API_UPLOADFILE = APP_CONSTANTS.BACKEND+"/apps/"+APP_CONSTANTS.APP_NAME+"/u
 const API_DELETEFILE = APP_CONSTANTS.BACKEND+"/apps/"+APP_CONSTANTS.APP_NAME+"/deletefile";
 const API_CREATEFILE = APP_CONSTANTS.BACKEND+"/apps/"+APP_CONSTANTS.APP_NAME+"/createfile";
 const API_RENAMEFILE = APP_CONSTANTS.BACKEND+"/apps/"+APP_CONSTANTS.APP_NAME+"/renamefile";
+const API_OPERATEFILE = APP_CONSTANTS.BACKEND+"/apps/"+APP_CONSTANTS.APP_NAME+"/operatefile";
 
 const DIALOG_HOST_ELEMENT_ID = "templateholder";
 
@@ -27,7 +28,7 @@ async function elementConnected(element) {
    menuOpen = false; 
 
    const path = element.getAttribute("path") || "/"; selectedPath = path.replace(/[\/]+/g,"/"); selectedIsDirectory = true;
-   let resp = await xhr.rest(API_GETFILES, "GET", {path});
+   let resp = await apiman.rest(API_GETFILES, "GET", {path}, true);
    if (!resp.result) return;
 
    resp.entries.unshift({name: await i18n.get("Create", session.get($$.MONKSHU_CONSTANTS.LANG_ID)), path, stats:{create: true}});
@@ -87,7 +88,7 @@ async function uploadAFile(element, file) {
    const queueReadFileChunk = (fileToRead, chunkNumber, resolve, reject) => {
       const reader = new FileReader();
       const onloadFunction = async loadResult => {
-         const resp = await xhr.rest(API_UPLOADFILE, "POST", {data:loadResult.target.result, path:`${selectedPath}/${fileToRead.name}`});
+         const resp = await apiman.rest(API_UPLOADFILE, "POST", {data:loadResult.target.result, path:`${selectedPath}/${fileToRead.name}`}, true);
          if (!resp.result) reject(); else {
             resolve(); 
             showProgress(element, chunkNumber+1, totalChunks, fileToRead.name);
@@ -129,19 +130,36 @@ function showMenu(element) {
 }
 
 async function deleteFile(_element) {
-   let resp = await xhr.rest(API_DELETEFILE, "GET", {path: selectedPath});
+   let resp = await apiman.rest(API_DELETEFILE, "GET", {path: selectedPath}, true);
    if (resp.result) router.reload(); else alert("Error");
 }
 
-function editFile(_element) {
+function editFile(element) {
    if (selectedIsDirectory) {
       const urlToLoad = util.replaceURLParamValue(session.get($$.MONKSHU_CONSTANTS.PAGE_URL), "path", selectedPath);
       router.loadPage(urlToLoad);
-   }
+      return;
+   } 
 
-   if (selectedElement.id == "upload") upload(selectedElement);
+   if (selectedElement.id == "upload") {upload(selectedElement); return;}
 
-   if (selectedElement.id == "create") create(selectedElement);
+   if (selectedElement.id == "create") {create(selectedElement); return;}
+
+   showDialog(element, "editfiledialog"); editFileLoadData(element);  // now it can only be a file 
+}
+
+async function editFileLoadData(element) {
+   const shadowRoot = file_manager.getShadowRootByContainedElement(element);
+   const resp = await apiman.rest(API_OPERATEFILE, "POST", {path: selectedPath, op: "read"}, true);
+   if (resp.result) shadowRoot.querySelector("#content").innerHTML = resp.data;
+}
+
+async function doReplaceContent(element) {
+   const shadowRoot = file_manager.getShadowRootByContainedElement(element);
+   const data = shadowRoot.querySelector("#content").value;
+   const resp = await apiman.rest(API_OPERATEFILE, "POST", {path: selectedPath, op: "write", data}, true);
+   if (!resp.result) alert("Error");
+   hideDialog(element);
 }
 
 async function showProgress(element, currentBlock, totalBlocks, fileName) {
@@ -184,7 +202,7 @@ function register() {
 async function createFile(element, isDirectory=false) {
    const path = file_manager.getShadowRootByContainedElement(element).querySelector("#path").value;
 
-   let resp = await xhr.rest(API_CREATEFILE, "GET", {path, isDirectory: isDirectory});
+   let resp = await apiman.rest(API_CREATEFILE, "GET", {path, isDirectory: isDirectory}, true);
    if (resp.result) router.reload(); else alert("Error");
 
    hideDialog(element);
@@ -197,7 +215,7 @@ async function doRename(element) {
    const subpaths = selectedPath.split("/"); subpaths.splice(subpaths.length-1, 1, newName);
    const newPath = subpaths.join("/");
 
-   let resp = await xhr.rest(API_RENAMEFILE, "GET", {old: selectedPath, new: newPath});
+   let resp = await apiman.rest(API_RENAMEFILE, "GET", {old: selectedPath, new: newPath}, true);
    if (resp.result) router.reload(); else alert("Error");
 
    hideDialog(element);
@@ -205,4 +223,4 @@ async function doRename(element) {
 
 const trueWebComponentMode = true;	// making this false renders the component without using Shadow DOM
 
-export const file_manager = {trueWebComponentMode, register, elementConnected, elementRendered, handleClick, showMenu, deleteFile, editFile, upload, uploadFiles, hideDialog, createFile, renameFile, doRename}
+export const file_manager = {trueWebComponentMode, register, elementConnected, elementRendered, handleClick, showMenu, deleteFile, editFile, upload, uploadFiles, hideDialog, createFile, renameFile, doRename, doReplaceContent}

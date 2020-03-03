@@ -5,6 +5,7 @@
  
 import {router} from "/framework/js/router.mjs";
 import {session} from "/framework/js/session.mjs";
+import {apimanager as apiman} from "/framework/js/apimanager.mjs";
 import {securityguard} from "/framework/js/securityguard.mjs";
 
 const init = async _ => {
@@ -16,6 +17,7 @@ const init = async _ => {
 }
 
 const main = async _ => {
+	apiman.registerAPIKeys(APP_CONSTANTS.API_KEYS, APP_CONSTANTS.KEY_HEADER);
 	let location = window.location.href;
 	if (!router.isInHistory(location) || !session.get(APP_CONSTANTS.USERID))
 		router.loadPage(APP_CONSTANTS.LOGIN_HTML);

@@ -15,12 +15,14 @@ export const i18n = {
 "Upload": "Upload",
 "Create": "Create",
 "CreateFile": "Create file...",
-"DeleteFile": "Delete...",
+"DeleteFile": "Delete",
 "EditFile": "Open...",
 "Path": "Name",
 "IsDirectory": "Is Directory?",
 "OK": "OK",
 "Cancel": "Cancel",
 "NewName": "Name",
-"Rename": "Rename"
+"Rename": "Rename...",
+"File": "File",
+"Directory": "Directory"
 }

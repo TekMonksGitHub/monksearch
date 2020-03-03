@@ -1,0 +1,39 @@
+/* 
+ * (C) 2015 TekMonks. All rights reserved.
+ * License: MIT - see enclosed license.txt file.
+ */
+
+body {
+	background: #ffffff url(/framework/img/logo_512.png) 0% 0% fixed no-repeat !important;
+}
+
+@font-face {
+    font-family: corbert;
+    src: url(/framework/fonts/Corbert-Regular.otf);
+}
+
+.lgbox {
+	position: absolute;
+	top: 25%;
+	left: 45%;
+	width: 100%
+}
+
+.langbox {
+	position: absolute;
+	bottom: 5%;
+	right: 5%;
+	color: #000000;
+}
+
+.langsel {
+	font-family: corbert;
+	cursor: pointer;
+	font-size: 11px;
+}
+
+a:link {text-decoration:none; color:black;}    /* unvisited link */
+a:visited {text-decoration:none;} /* visited link */
+a:hover {text-decoration:underline;}   /* mouse over link */
+a:active {text-decoration:underline;}  /* selected link */
+
